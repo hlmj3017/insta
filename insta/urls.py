@@ -23,6 +23,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('posts/', include('posts.urls')),
+    path('accounts/', include('accounts.urls')),
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 
 # +는 concatenate연산 / 저장을 할 때 실제 위치는 document_root 어디에 있어요
 # 어떤 경로로 들어오면 이거를 보여줄 거야
