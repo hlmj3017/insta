@@ -19,7 +19,9 @@ def create(request):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            post = form.save(commit=False)
+            post.user = request.user # 로그인한 사람 정보 출력
+            post.save()
             return redirect('posts:index')
 
     
