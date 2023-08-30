@@ -15,8 +15,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-]
+    path('posts/', include('posts.urls')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 
+# +는 concatenate연산 / 저장을 할 때 실제 위치는 document_root 어디에 있어요
+# 어떤 경로로 들어오면 이거를 보여줄 거야
+
