@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from .models import Post
 
 from .forms import PostForm, CommentForm
+
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def index(request):
@@ -16,7 +18,7 @@ def index(request):
     return render(request, 'index.html', context)
 
 
-
+@login_required
 def create(request):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
@@ -36,7 +38,7 @@ def create(request):
 
     return render(request, 'form.html', context)
 
-
+@login_required
 def comment_create(request, post_id):
     comment_form = CommentForm(request.POST) # 인스턴스화
 
