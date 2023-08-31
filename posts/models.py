@@ -17,6 +17,9 @@ class Post(models.Model):
     )
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE) # AUTH_USER_MODEL: 상수임을 의미하는 코드/ 변하지 않는 데이터를 의미
+    # user_id =
+
+    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_posts')
 
 
 class Comment(models.Model):

@@ -56,3 +56,23 @@ def comment_create(request, post_id):
 
         return redirect('posts:index')
 
+
+@login_required
+def like(request, post_id):
+
+    # 좋아요 버튼을 누른 유저
+    user = request.user # 로그인한 사람
+    post = Post.objects.get(id=post_id) # 어떤 게시물 선택
+
+    # 이미 좋아요버튼을 누른 경우
+    # if user in post.like_users.all():
+    if post in user.like_posts.all():
+        post.like_users.remove(user) # 좋아요 누른 사람 제거
+        # user.like_posts.remove(post)
+
+    # 좋아요버튼을 아직 안누른 경우
+    else:
+        post.like_users.add(user) # 게시물에 좋아요 누른 사람 추가.. 게시물을 기준으로 나를 추가
+        # user.like_posts.add(post) # 나를 기준으로 게시물 추가
+
+    return redirect('posts:index')
