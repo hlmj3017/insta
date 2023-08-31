@@ -10,3 +10,7 @@ class User(AbstractUser):
     )
     # post_set =   작성한 목록인지
     # like_posts =   좋아요를 누른  -> 충돌이 나므로 이름 수정
+
+
+    followings = models.ManyToManyField('self', related_name='followers', symmetrical=False) # self: 자기 자신 참조
+    # followers = 
