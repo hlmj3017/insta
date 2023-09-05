@@ -5,5 +5,56 @@
   {% for post in posts %}
     {% include '_card.html' %}
   {% endfor %}
+  
+  <!-- like 기능 ajax 처리 -->
+  <script>
+    // 한 화면에 있는 i태그를 다 가져오는 것 (좋아요 버튼)
+    const likeButtons = document.querySelectorAll('i.heart')   
+    // console.log(likeButtons)
+
+    likeButtons.forEach((likeButton)=>{
+      // console.log(likeButton) 
+      // 하트 하나하나 누르면 반응하는 eventlistener을 실행 
+      // 클릭한 요소의 data-post-id 데이터 속성 값을 postId 변수에 할당 / 몇번째 포스트를 가져왔는지 번호 보여줌
+      likeButton.addEventListener('click', (event)=>{
+        let postId = event.target.dataset.postId
+        console.log(postId)
+
+        likeRequest(event.target, postId)
+
+      })
+    })
+
+    let likeRequest = async (button, postId) => {
+      console.log(button, postId)
+      // django 서버에 요청을 보낸다 / 어떤 게시물에 좋아요 요청을 보낼 것인지
+      // likeURL 변수에 Django 서버로 보낼 HTTP 요청의 URL을 생성합니다. ${postId}는 함수에 전달된 postId
+      let likeURL = `/posts/${postId}/like-async/`
+      // await 키워드를 사용하여 서버로부터의 응답을 기다리고 response 변수에 서버 응답 객체가 저장
+      let response = await fetch(likeURL)
+      let result = await response.json()
+
+      console.log(result)
+
+      // django 서버의 응답에 따라 좋아요 버튼을 수정한다
+
+      if (result.status) {
+        // true => 좋아요가 눌린 경우
+        button.classList.remove('bi-heart')
+        button.classList.add('bi-heart-fill')
+        button.style.color = 'red'
+        button.innerHTML = result.count
+
+      } else {
+        // false => 좋아요 취소
+        button.classList.remove('bi-heart-fill')
+        button.classList.add('bi-heart')
+        button.style.color = 'black'
+        button.innerHTML = result.count
+
+      }
+    }
+
+  </script>
 
 {% endblock %}
