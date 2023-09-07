@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<h1>Edit Comment</h1>
+
+<form action="{% url 'posts:comment_update' post_id=post_id id=comment.id %}" method="POST">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label for="content" class="form-label">내용</label>
+        <textarea class="form-control" id="content" cols="30" rows="10" name="content">{{ comment.content }}</textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+
+<a href="{% url 'posts:index' %}" class="btn btn-secondary mt-3">Back to Posts</a>
+
+
+
+{% endblock %}

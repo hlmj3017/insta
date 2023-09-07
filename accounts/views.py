@@ -3,9 +3,12 @@ from django.shortcuts import render, redirect
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 
 from django.contrib.auth import login as auth_login
+from django.contrib.auth import logout as auth_logout
 # from .models import User
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+
+from django.http import JsonResponse
 
 # Create your views here.
 def signup(request):
@@ -34,7 +37,7 @@ def login(request):
         form = CustomAuthenticationForm(request, request.POST)
         if form.is_valid():
             user = form.get_user()
-            auth_login(request, user)
+            auth_login(request, user)  # 세션에 사용자 정보를 저장
             return redirect('posts:index')
 
 
@@ -81,5 +84,35 @@ def follow(request, username):
 
     return redirect('accounts:profile', username=username)
 
-
     
+def logout(request):
+    auth_logout(request)
+    return redirect('posts:index')
+
+
+
+# def follow_async(request, username):
+#     User = get_user_model()
+
+#     me = request.user  # 내가 팔로우하고 싶은
+#     you = User.objects.get(username=username) # 내가 팔로우하고 싶은 상대방
+
+#     # 팔로잉이 이미 되어있는 경우
+#     # if me in you.followers.all(): # 당신을 따르고 있는 사람들에 내가 있는지
+#     if you in me.followings.all(): # 내가 팔로잉하는 사람에 너가 있는지
+#         me.followings.remove(you)  # 나 너 지울거
+#         status = False
+
+
+#     # 팔로잉이 아직 안 된 경우
+
+#     else:
+#         me.followings.add(you)
+#         status =  True
+
+#     context = {
+#         'status': status,
+
+#     }
+
+#     return JsonResponse(context)

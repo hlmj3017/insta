@@ -15,7 +15,7 @@
       {% if post in user.like_posts.all %}
         <i class="bi bi-heart-fill heart" style="color: red ;" data-post-id="{{post.id}}">{{post.like_users.all|length}}</i>
       {% else %}
-        <i class="bi bi-heart heart" data-post-id="{{post.id}}"></i> 
+        <i class="bi bi-heart heart" data-post-id="{{post.id}}">{{post.like_users.all|length}}</i> 
       {% endif %}
     <!-- </a>  -->
       명이 좋아합니다.
@@ -33,13 +33,39 @@
       {% csrf_token %}
       {% bootstrap_form comment_form %}
       <input type="submit">
-
     </form>
     <hr>
     {% endif %}
 
+    
     {% for comment in post.comment_set.all %}
       <li>{{comment.user}} : {{comment.content}}</li>
+      <a href="{% url 'posts:comment_delete' post_id=post.id id=comment.id %}" class="btn btn-outline-primary btn-sm">delete</a> 
+      <a href="{% url 'posts:comment_edit' post_id=post.id id=comment.id %}" class="btn btn-outline-info btn-sm">edit</a> 
+      
+      <!-- <a href="{% url 'posts:comment_like' post_id=post.id comment_id=comment.id %}" class="text-reset text-decoration-none">
+
+        {% if comment in user.liked_comments.all %}
+          <i class="bi bi-heart-fill" style="color: red ;" ></i>
+        {% else %}
+          <i class="bi bi-heart" ></i> 
+        {% endif %}
+      </a> {{comment.likes.all|length}} -->
+      
+
+      {% if comment in user.liked_comments.all %}
+        <i class="bi bi-heart-fill comment-heart" style="color: red ;" data-comment-id="{{comment.id}}" data-post-id="{{post.id}}">{{comment.likes.all|length}}</i>
+      {% else %}
+        <i class="bi bi-heart comment-heart" data-comment-id="{{comment.id}}" data-post-id="{{post.id}}">{{comment.likes.all|length}}</i> 
+      {% endif %}
+
+        <!-- {{comment.likes.all|length}} -->
+       
+
     {% endfor %}
+
+
+
+
   </div>
 </div>

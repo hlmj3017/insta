@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Post
+from .models import Post, Comment
 
 from .forms import PostForm, CommentForm
 
@@ -9,7 +9,7 @@ from django.http import JsonResponse
 # Create your views here.
 
 def index(request):
-    posts = Post.objects.all().order_by('-id')
+    posts = Post.objects.all().order_by('-id') # 최신순
     comment_form = CommentForm()
 
     context = {
@@ -59,6 +59,40 @@ def comment_create(request, post_id):
         return redirect('posts:index')
 
 
+def comment_delete(request, post_id, id):
+    comment = Comment.objects.get(id=id)
+
+    comment.delete()
+
+    return redirect('posts:index')
+
+
+def comment_edit(request, post_id, id):
+    comment = Comment.objects.get(id=id)
+
+    context = {
+        'comment': comment,
+        'post_id': post_id
+    }
+
+    return render(request, 'comment_edit.html', context)
+
+
+def comment_update(request, post_id, id):
+    # new data
+    updated_content = request.POST.get('content')
+
+    # old data
+    comment = Comment.objects.get(id=id)
+
+    comment.content = updated_content
+    comment.save()
+
+    return redirect('posts:index')
+
+
+
+
 @login_required
 def like(request, post_id):
 
@@ -78,6 +112,21 @@ def like(request, post_id):
         # user.like_posts.add(post) # 나를 기준으로 게시물 추가
 
     return redirect('posts:index')
+
+
+@login_required
+def comment_like(request, post_id, comment_id):
+    user = request.user 
+    comment = Comment.objects.get(id=comment_id)  
+
+    if comment in user.liked_comments.all():
+        comment.likes.remove(user) 
+ 
+    else:
+        comment.likes.add(user) 
+
+    return redirect('posts:index')
+
 
 
 def like_async(request, post_id):
@@ -101,3 +150,30 @@ def like_async(request, post_id):
     }
 
     return JsonResponse(context)
+
+
+
+def comment_like_async(request, post_id, comment_id):
+    user = request.user 
+    comment = Comment.objects.get(id=comment_id)  
+    
+
+    if comment in user.liked_comments.all():
+        comment.likes.remove(user) 
+        status = False
+        
+ 
+    else:
+        comment.likes.add(user) 
+        status = True
+
+    # likes_count = comment.likes.count()
+
+    context = {
+        'status': status,
+        # 'count': likes_count
+        'count': len(comment.likes.all())
+    }
+
+    return JsonResponse(context)
+
